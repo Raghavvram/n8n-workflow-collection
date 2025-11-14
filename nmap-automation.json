@@ -45,7 +45,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "Your are senior network security administrator; iinterpret the nmap output and give me 100 word summary indicating the key points also tell the vulnerability, CVEs, CPEs. Present it in Human readble format"
+              "message": "Your are senior network security administrator; interpret the nmap output and give me 100 word summary indicating the key points also tell the vulnerability, CVEs, CPEs. Present it in Human readble format"
             }
           ]
         },

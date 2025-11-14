@@ -1,0 +1,195 @@
+{
+  "name": "nmap-automation",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b64fe2aa-7b93-43c9-a40a-83e5014d27bd",
+      "name": "Telegram Trigger",
+      "webhookId": "0794aa8c-c206-47c0-82b0-9dcc1827746b",
+      "credentials": {
+        "telegramApi": {
+          "id": "HePOgLC2ZUcLRV2W",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "=nmap -sV  {{ $json.message.text }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6f225f91-93ca-4976-b3cd-2607c7b58369",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.stdout }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Your are senior network security administrator; iinterpret the nmap output and give me 100 word summary indicating the key points also tell the vulnerability, CVEs, CPEs. Present it in Human readble format"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ea2dbc7f-c1cf-4246-a7b3-d7c9ef3fef56",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "groq/compound",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        336,
+        192
+      ],
+      "id": "64c03aef-d14f-4b38-8f2a-ebccdcb2cb98",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "NlEyjBCitGy9kHs5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemma-3n-e4b-it:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        544,
+        192
+      ],
+      "id": "bc585dca-f6ff-460b-b7d6-c7ddfafda0d2",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "uvegYGOy9IIo7YPX",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "579c55f3-442e-4f71-8fec-f7f966b6b5ae",
+      "name": "Send a text message",
+      "webhookId": "6ff149ed-8f92-4d02-9f0f-4d6c2e328579",
+      "credentials": {
+        "telegramApi": {
+          "id": "HePOgLC2ZUcLRV2W",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "141cb247-d70e-4c9b-b9af-8738ae0b0754",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ace91eeccdd067bf94e2495c86883fde0cbc3a5934e7936a4f9ddc621461ad8"
+  },
+  "id": "FMSSHrdyZV6WnSZR",
+  "tags": []
+}

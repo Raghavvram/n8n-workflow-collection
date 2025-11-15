@@ -1,5 +1,6 @@
 sudo apt update
 sudo apt install openvas
+sudo gvm-setup
 sudo gvm-check-setup
 sudo greenbone-feed-sync --type cert
 sudo greenbone-feed-sync --type scap
